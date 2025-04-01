@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+    text-align: center;
+    font-family: Arial, sans-serif;
+        background-image: url('/images/background.jpg'); /* Thay 'your-image-url.jpg' bằng đường dẫn đến hình ảnh của bạn */
+        background-size: cover; /* Đảm bảo hình ảnh phủ đầy toàn bộ màn hình */
+        background-position: center; /* Căn giữa hình ảnh */
+        background-repeat: no-repeat; /* Không lặp lại hình ảnh */
+        margin: 0;
+        padding: 0;
+        height: 100vh; /* Đảm bảo body chiếm toàn bộ chiều cao màn hình */
+    
+}
+
+canvas {
+    background: #444;
+    display: block;
+    margin: 10px auto;
+    border-radius: 10px;
+    border: dashed #FF0000;
+}
+h1{
+    text-align: center;
+    color: #FF0000;
+    text-shadow: #444 0px 0px 100px;
+}

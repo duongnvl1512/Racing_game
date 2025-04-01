@@ -89,8 +89,8 @@ muteButton.addEventListener("click", () => {
         crashSound.volume = 0;
         muteButton.textContent = "Unmute";
     } else {
-        engineSound.volume = 0.3;
-        crashSound.volume = 1;
+        // engineSound.volume = 1;
+        crashSound.volume = 0.3;
         muteButton.textContent = "Mute";
     }
 });
@@ -280,7 +280,7 @@ function restartGame() {
 
 function gameLoop() {
     if (isMenu) return;
-
+    if (!isMuted) engineSound.play();
     update();
     draw();
     if (!gameOver) requestAnimationFrame(gameLoop);

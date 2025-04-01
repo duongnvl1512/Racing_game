@@ -10,6 +10,35 @@ let gameOver = false;
 let keys = {};
 let roadLines = [];
 let roadSpeed = 5;
+// Tải âm thanh
+const engineSound = new Audio("/sounds/background-sound.mp3"); // Âm thanh khi xe chạy
+const crashSound = new Audio("/sounds/crash.mp3");   // Âm thanh khi va chạm
+
+// Thiết lập để âm thanh động cơ phát liên tục
+engineSound.loop = true; // Âm thanh sẽ lặp lại liên tục
+engineSound.volume = 0.3; // Giảm âm lượng để không quá lớn
+
+// Tạo biến để theo dõi trạng thái âm thanh
+let isMuted = false;
+
+// Thêm sự kiện cho nút Mute
+const muteButton = document.getElementById("muteButton");
+
+muteButton.addEventListener("click", () => {
+    isMuted = !isMuted; // Đảo ngược trạng thái âm thanh
+    if (isMuted) {
+        // Tắt âm thanh
+        engineSound.volume = 0;
+        crashSound.volume = 0;
+        muteButton.textContent = "Unmute"; // Đổi tên nút thành "Unmute"
+    } else {
+        // Bật âm thanh
+        engineSound.volume = 0.3; // Đặt lại âm lượng của âm thanh động cơ
+        crashSound.volume = 1;    // Đặt lại âm lượng của âm thanh va chạm
+        muteButton.textContent = "Mute"; // Đổi tên nút thành "Mute"
+    }
+});
+
 
 // Tải quà
 const giftImg = new Image();
@@ -69,6 +98,11 @@ let startTime = Date.now(); // Thời gian bắt đầu trò chơi
 function update() {
     if (gameOver) return;
 
+    // Bắt đầu phát âm thanh động cơ khi game đang chạy
+    if (!engineSound.isPlaying) {
+        engineSound.play();
+    }
+
     movePlayer();
 
     // Cập nhật vạch kẻ đường
@@ -99,6 +133,7 @@ function update() {
         obstacle.y += obstacleSpeed;
         if (checkCollision(player, obstacle)) {
             gameOver = true;
+            crashSound.play(); // Phát âm thanh va chạm khi xe tông vào chướng ngại vật
             showGameOverPopup();
         }
     });

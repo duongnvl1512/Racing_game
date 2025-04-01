@@ -49,8 +49,13 @@ giftImg.src = "/images/gift.png";
 const playerImg = new Image();
 playerImg.src = "/images/playercar.jpg";
 
-const obstacleImg = new Image();
-obstacleImg.src = "/images/obstaclecar.png";
+// Mảng chứa các đường dẫn đến hình ảnh của chướng ngại vật
+const obstacleImages = [
+    "/images/obstaclecar.png",  // Hình ảnh 1
+    "/images/obstraclebird.png",  // Hình ảnh 2
+    "/images/obstracletree.jpg"   // Hình ảnh 3
+];
+
 
 // Khởi tạo vạch kẻ đường trên mỗi làn
 for (let lane = 1; lane <= 2; lane++) {
@@ -75,11 +80,25 @@ function movePlayer() {
     if (keys["ArrowRight"] && player.x < canvas.width - player.width) player.x += player.speed;
 }
 
-// Hàm tạo xe khác
+// Hàm tạo chướng ngại vật với hình ảnh ngẫu nhiên
 function createObstacle() {
     let x = Math.floor(Math.random() * 3) * roadWidth + 10;
-    obstacles.push({ x, y: -100, width: 50, height: 100, speed: 3 + Math.random() * 2 });
+    // Chọn ngẫu nhiên một hình ảnh chướng ngại vật từ mảng
+    let randomImageIndex = Math.floor(Math.random() * obstacleImages.length);
+    let obstacleImage = new Image();
+    obstacleImage.src = obstacleImages[randomImageIndex];
+
+    // Thêm đối tượng chướng ngại vật vào mảng
+    obstacles.push({
+        x: x,
+        y: -100,
+        width: 50,
+        height: 100,
+        speed: 3 + Math.random() * 2,
+        image: obstacleImage  // Lưu trữ hình ảnh vào đối tượng
+    });
 }
+
 
 // Hàm tạo vật phẩm
 function createItem() {
@@ -157,9 +176,9 @@ function draw() {
     // Vẽ xe người chơi bằng hình ảnh
     ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
 
-    // Vẽ xe khác bằng hình ảnh
+    // Vẽ các chướng ngại vật (có thể có hình ảnh khác nhau)
     obstacles.forEach((obstacle) => {
-        ctx.drawImage(obstacleImg, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+        ctx.drawImage(obstacle.image, obstacle.x, obstacle.y, obstacle.width, obstacle.height);
     });
 
     // Vẽ vật phẩm (quà)
@@ -171,6 +190,7 @@ function draw() {
     ctx.fillStyle = "black";
     ctx.fillText("Score: " + score, 10, 20);
 }
+
 
 // Hàm hiển thị thông báo Game Over
 function showGameOverPopup() {

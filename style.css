@@ -24,3 +24,50 @@ h1{
     color: #ffda84;
     text-shadow: #444 0px 0px 100px;
 }
+.menu{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(145deg, #ff6f61, #ff3b30);
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 px 0px 20px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    color: #fff;
+    font-family: "Arial", sans-serif;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+    transform: translate(-50%, -50%)scale(1.1);
+}
+
+.menu:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+button {
+    background: linear-gradient(145deg, #04ff10, #f7ff82);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background: linear-gradient(145deg, #89acff, #c59efb);
+    transform: translateY(-2px);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+#highScore {
+    font-size: 20px;
+    font-weight: bold;
+}

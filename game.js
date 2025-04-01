@@ -10,6 +10,11 @@ let gameOver = false;
 let keys = {};
 let roadLines = [];
 let roadSpeed = 5;
+
+// Khởi tạo điểm cao nhất khi bắt đầu trò chơi
+let highestScore = localStorage.getItem("highestScore") || 0;
+
+
 // Tải âm thanh
 const engineSound = new Audio("/sounds/background-sound.mp3"); // Âm thanh khi xe chạy
 const crashSound = new Audio("/sounds/crash.mp3");   // Âm thanh khi va chạm
@@ -189,11 +194,23 @@ function draw() {
     // Hiển thị điểm số
     ctx.fillStyle = "black";
     ctx.fillText("Score: " + score, 10, 20);
+
+    // Hiển thị điểm cao nhất
+    let highestScore = localStorage.getItem("highestScore") || 0;
+    ctx.fillText("Highest Score: " + highestScore, 10, 40);
 }
 
 
-// Hàm hiển thị thông báo Game Over
+
+// Hàm hiển thị thông báo Game Over và lưu điểm cao nhất
 function showGameOverPopup() {
+    // Lưu điểm cao nhất vào localStorage nếu điểm hiện tại cao hơn điểm cao nhất đã lưu
+    let highestScore = localStorage.getItem("highestScore") || 0;
+    if (score > highestScore) {
+        localStorage.setItem("highestScore", score); // Lưu điểm mới nếu cao hơn
+        highestScore = score; // Cập nhật điểm cao nhất hiện tại
+    }
+
     setTimeout(() => {
         const popup = document.createElement("div");
         popup.style.position = "fixed";
@@ -214,7 +231,8 @@ function showGameOverPopup() {
         popup.innerHTML = `
             <h2 style="margin-bottom: 10px; font-size: 24px; font-weight: bold;">Game Over!</h2>
             <p style="margin-bottom: 20px;">Score: ${score}</p>
-            <p>Press Enter or Exit</p>
+            <p>Highest Score: ${highestScore}</p>
+            <p>Press Enter to Restart or Escape to Exit</p>
         `;
         document.body.appendChild(popup);
 
@@ -232,11 +250,11 @@ function showGameOverPopup() {
             } else if (event.key === "Escape") {
                 document.body.removeChild(popup); // Thoát
                 window.removeEventListener("keydown", handleKeyPress); // Hủy lắng nghe sự kiện sau khi đã xử lý
-                // Có thể thêm hành động thoát trò chơi ở đây nếu cần, ví dụ: window.close();
             }
         });
     }, 100);
 }
+
 
 
 // Hàm restart game

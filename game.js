@@ -94,6 +94,7 @@ showMenu();
 engineSound.loop = true;
 engineSound.volume = 0.3;
 
+
 muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
     if (isMuted) {
@@ -106,6 +107,9 @@ muteButton.addEventListener("click", () => {
         muteButton.textContent = "Mute";
     }
 });
+window.addEventListener("keypress", (event) => {
+        muteButton.click();
+})
 
 // Khởi tạo đường kẻ
 for (let lane = 1; lane <= 2; lane++) {
@@ -246,7 +250,7 @@ function showGameOverPopup() {
             <p style="margin-bottom: 20px;">Score: ${score}</p>
             <p>Highest Score: ${highestScore}</p>
             <p>Press Enter to Restart or Escape to Exit</p>
-        `;
+            <p>Press M to mute or unmute the sound</p>        `;
         document.body.appendChild(popup);
 
         setTimeout(() => {
@@ -259,7 +263,7 @@ function showGameOverPopup() {
                 restartGame();
                 window.removeEventListener("keydown", handleKeyPress);
             } else if (event.key === "Escape") {
-                document.body.removeChild(popup);
+                this.window.close(); // Đóng cửa sổ game
                 window.removeEventListener("keydown", handleKeyPress);
             }
         });

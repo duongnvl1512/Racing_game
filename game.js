@@ -1,7 +1,15 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-
 const roadWidth = canvas.width / 3;
+// Tải âm thanh
+const engineSound = new Audio("/sounds/background-sound.mp3");
+const crashSound = new Audio("/sounds/crash.mp3");
+
+
+// Tạo biến theo dõi trạng thái âm thanh
+let isMuted = false;
+const muteButton = document.getElementById("muteButton");
+
 let player = { x: canvas.width / 2 - 25, y: canvas.height - 100, width: 50, height: 100, speed: 5 };
 let obstacles = [];
 let items = [];
@@ -9,9 +17,24 @@ let score = 0;
 let gameOver = false;
 let keys = {};
 let roadLines = [];
-let roadSpeed = 5;
-
+let roadSpeed = 3;
 let isMenu = true; // Biến này sẽ giúp xác định xem game có đang ở trong menu hay không
+// Khởi tạo điểm cao nhất khi bắt đầu trò chơi
+let highestScore = localStorage.getItem("highestScore") || 0;
+let startTime = Date.now();
+
+// Tải hình ảnh quà và xe
+const giftImg = new Image();
+giftImg.src = "/images/gift.png";
+
+const playerImg = new Image();
+playerImg.src = "/images/playercar.jpg";
+
+const obstacleImages = [
+    "/images/obstaclecar.png",
+    "/images/obstraclebird.png",
+    "/images/obstracletree.jpg"
+];
 
 // Tạo menu
 function showMenu() {
@@ -32,7 +55,7 @@ function showMenu() {
     menu.style.transform = "translate(-50%, -50%) scale(1.1)";
 
     menu.innerHTML = `
-        <h1>Highway Racer</h1>
+        <h1>RACING CAR</h1>
         <p style="margin-bottom: 20px;">Press Enter to Start</p>
         <p style="margin-bottom: 20px;">High Score: ${localStorage.getItem("highestScore") || 0}</p>
         <button id="startButton">Start Game</button>
@@ -67,20 +90,10 @@ function showMenu() {
 // Hiển thị menu khi tải trang
 showMenu();
 
-// Khởi tạo điểm cao nhất khi bắt đầu trò chơi
-let highestScore = localStorage.getItem("highestScore") || 0;
-
-// Tải âm thanh
-const engineSound = new Audio("/sounds/background-sound.mp3");
-const crashSound = new Audio("/sounds/crash.mp3");
-
 // Đặt lặp lại cho âm thanh động cơ
 engineSound.loop = true;
 engineSound.volume = 0.3;
 
-// Tạo biến theo dõi trạng thái âm thanh
-let isMuted = false;
-const muteButton = document.getElementById("muteButton");
 
 muteButton.addEventListener("click", () => {
     isMuted = !isMuted;
@@ -89,24 +102,14 @@ muteButton.addEventListener("click", () => {
         crashSound.volume = 0;
         muteButton.textContent = "Unmute";
     } else {
-        // engineSound.volume = 1;
+        engineSound.volume = 1;
         crashSound.volume = 0.3;
         muteButton.textContent = "Mute";
     }
 });
-
-// Tải hình ảnh quà và xe
-const giftImg = new Image();
-giftImg.src = "/images/gift.png";
-
-const playerImg = new Image();
-playerImg.src = "/images/playercar.jpg";
-
-const obstacleImages = [
-    "/images/obstaclecar.png",
-    "/images/obstraclebird.png",
-    "/images/obstracletree.jpg"
-];
+window.addEventListener("keypress", (event) => {
+        muteButton.click();
+})
 
 // Khởi tạo đường kẻ
 for (let lane = 1; lane <= 2; lane++) {
@@ -143,7 +146,7 @@ function createObstacle() {
         y: -100,
         width: 50,
         height: 100,
-        speed: 3 + Math.random() * 2,
+        speed: 2 + Math.random() * 2,
         image: obstacleImage
     });
 }
@@ -151,15 +154,13 @@ function createObstacle() {
 // Tạo vật phẩm
 function createItem() {
     let x = Math.random() * (canvas.width - 30); // Vị trí ngẫu nhiên cho vật phẩm
-    items.push({ x, y: -50, width: 30, height: 30, speed: 3 });
+    items.push({ x, y: -50, width: 30, height: 30, speed: 2 });
 }
 
 // Kiểm tra va chạm
 function checkCollision(a, b) {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
-
-let startTime = Date.now();
 
 function update() {
     if (gameOver) return;
@@ -173,8 +174,8 @@ function update() {
         }
     });
 
-    let elapsedTime = (Date.now() - startTime) / 1000;
-    let obstacleSpeed = 3 + Math.random() * 2 + elapsedTime / 10;
+    let elapsedTime = (Date.now() - startTime) / 10000;
+    let obstacleSpeed = 2 + Math.random() * 2 + elapsedTime / 10;
 
     items.forEach((item, index) => {
         item.y += item.speed;
@@ -249,7 +250,7 @@ function showGameOverPopup() {
             <p style="margin-bottom: 20px;">Score: ${score}</p>
             <p>Highest Score: ${highestScore}</p>
             <p>Press Enter to Restart or Escape to Exit</p>
-        `;
+            <p>Press M to mute or unmute the sound</p>        `;
         document.body.appendChild(popup);
 
         setTimeout(() => {
@@ -262,7 +263,7 @@ function showGameOverPopup() {
                 restartGame();
                 window.removeEventListener("keydown", handleKeyPress);
             } else if (event.key === "Escape") {
-                document.body.removeChild(popup);
+                this.window.close(); // Đóng cửa sổ game
                 window.removeEventListener("keydown", handleKeyPress);
             }
         });
@@ -270,11 +271,7 @@ function showGameOverPopup() {
 }
 
 function restartGame() {
-    player.x = canvas.width / 2 - 25;
-    obstacles = [];
-    items = [];
-    score = 0;
-    gameOver = false;
+    window.location.reload(); // Tải lại trang để bắt đầu lại trò chơi
     gameLoop();
 }
 
